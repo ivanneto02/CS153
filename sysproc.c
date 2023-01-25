@@ -89,3 +89,14 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+/* added */
+int sys_getparents(void) {
+  getparents();
+  return 0;
+}
+
+int sys_test(void) {
+  test();
+  return 0;
+}

@@ -496,6 +496,40 @@ kill(int pid)
   return -1;
 }
 
+/* added - opening */
+
+void getparents(void) {
+  
+  // gets the current process
+  struct proc *currproc = myproc();
+
+  cprintf("([%d] current) <- ", currproc->pid);
+
+  int i = 1;
+  while (currproc->parent != 0) {
+
+    // get the next parent process
+    currproc = currproc->parent;
+
+    if (currproc->parent) {
+        cprintf("([%d] parent%d) <- ", currproc->pid, i);
+    }
+    else {
+        cprintf("([%d] init)\n", currproc->pid);
+    }
+
+    i = i + 1;
+
+  }
+
+}
+
+void test(void) {
+  cprintf("testing testing, got to kernel space\n");
+}
+
+/* added - closing */
+
 //PAGEBREAK: 36
 // Print a process listing to console.  For debugging.
 // Runs when user types ^P on console.

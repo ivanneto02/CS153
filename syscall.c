@@ -104,6 +104,10 @@ extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
 
+// added
+extern int sys_getparents(void); 
+extern int sys_test(void); 
+
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
 [SYS_exit]    sys_exit,
@@ -126,6 +130,10 @@ static int (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+
+// added
+[SYS_getparents] sys_getparents,
+[SYS_test] sys_test,
 };
 
 void
