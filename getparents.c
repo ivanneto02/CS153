@@ -5,5 +5,5 @@
 int main(int argc, char* argv[]) {
     // printf("Testing");
     getparents();
-    exit();
+    exit(0);
 }

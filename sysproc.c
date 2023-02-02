@@ -16,7 +16,7 @@ sys_fork(void)
 int
 sys_exit(void)
 {
-  exit();
+  exit(myproc()->exitStatus);
   return 0;  // not reached
 }
 
