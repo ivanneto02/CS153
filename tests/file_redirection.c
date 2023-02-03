@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
         execvp(myargs[0], myargs); // runs word count
     } else {
         // parent goes down this path (main)
-        int rc_wait = wait(NULL);
+        int rc_wait = wait(0);
     }
     return 0;
 }

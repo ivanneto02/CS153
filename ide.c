@@ -54,7 +54,7 @@ ideinit(void)
 
   initlock(&idelock, "ide");
   ioapicenable(IRQ_IDE, ncpu - 1);
-  idewait();
+  idewait(0);
 
   // Check if disk 1 is present
   outb(0x1f6, 0xe0 | (1<<4));
@@ -84,7 +84,7 @@ idestart(struct buf *b)
 
   if (sector_per_block > 7) panic("idestart");
 
-  idewait();
+  idewait(0);
   outb(0x3f6, 0);  // generate interrupt
   outb(0x1f2, sector_per_block);  // number of sectors
   outb(0x1f3, sector & 0xff);

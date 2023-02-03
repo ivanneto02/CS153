@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
         execvp(myargs[0], myargs); // runs word count
         printf("this shouldn’t print out");
     } else { // parent goes down this path (main)
-        int rc_wait = wait(NULL);
+        int rc_wait = wait(0);
         printf("hello, I am parent of %d (rc_wait:%d) (pid:%d)\n",
         rc, rc_wait, (int) getpid());
     }
