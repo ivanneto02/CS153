@@ -299,11 +299,7 @@ wait(int* status)
 
       if(p->state == ZOMBIE){
         // Found one.
-        //cprintf("   --- testing wait: %d, %d\n", p->exitStatus, *status);
-        // *status = 10; 
         *status = p->exitStatus;
-        //*status = p->exitStatus; // returning terminated child exit status through the status argument
-        //cprintf("   --- testing wait2: %d, %d\n", p->exitStatus, *status);
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
@@ -347,7 +343,7 @@ waitpid(int pid, int* status, int options) {
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
 
       if (p->parent == curproc) {
-        ischild = 0;
+        ischild = 1;
       }
 
       // the process's PID does not match against
