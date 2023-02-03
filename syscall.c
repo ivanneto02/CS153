@@ -107,6 +107,8 @@ extern int sys_uptime(void);
 // added
 extern int sys_getparents(void); 
 extern int sys_test(void); 
+extern int sys_waitpid(void);
+extern int sys_lab1_test(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -134,6 +136,8 @@ static int (*syscalls[])(void) = {
 // added
 [SYS_getparents] sys_getparents,
 [SYS_test] sys_test,
+[SYS_waitpid] sys_waitpid,
+[SYS_lab1_test] sys_lab1_test,
 };
 
 void

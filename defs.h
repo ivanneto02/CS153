@@ -118,6 +118,7 @@ void            setproc(struct proc*);
 void            sleep(void*, struct spinlock*);
 void            userinit(void);
 int             wait(int*);
+int             waitpid(int, int*, int); // added
 void            wakeup(void*);
 void            yield(void);
 
@@ -189,6 +190,7 @@ void            clearpteu(pde_t *pgdir, char *uva);
 /* added */
 void            getparents(void);
 void            test(void);
+int             lab1_test(void);
 
 
 // number of elements in fixed-size array

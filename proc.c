@@ -236,12 +236,14 @@ exit(int status)
 
   // Close all open files.
   for(fd = 0; fd < NOFILE; fd++){
+
     if(curproc->ofile[fd]){
       fileclose(curproc->ofile[fd]);
       curproc->ofile[fd] = 0;
     }
   }
 
+  //cprintf("-- testing exit status: %d\n", status);
   curproc->exitStatus = status; 
 
   begin_op();
@@ -258,6 +260,7 @@ exit(int status)
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->parent == curproc){
       p->parent = initproc;
+      // this isn't always reached 
       if(p->state == ZOMBIE)
         wakeup1(initproc);
     }
@@ -274,14 +277,11 @@ exit(int status)
 int
 wait(int* status)
 {
-  struct proc *p;
+  // cprintf("-- testing exitstatus: %d\n", *status);
+
+  struct proc *p;  
   int havekids, pid;
   struct proc *curproc = myproc();
-  
-  // if (status == NULL) {
-  //   // exit status discarded
-  //   return -1;
-  // }
 
   acquire(&ptable.lock);
   for(;;){
@@ -293,8 +293,17 @@ wait(int* status)
       }
       havekids = 1;
 
+      if (!status) {
+        p->exitStatus = -1;
+      }
+
       if(p->state == ZOMBIE){
         // Found one.
+        //cprintf("   --- testing wait: %d, %d\n", p->exitStatus, *status);
+        // *status = 10; 
+        *status = p->exitStatus;
+        //*status = p->exitStatus; // returning terminated child exit status through the status argument
+        //cprintf("   --- testing wait2: %d, %d\n", p->exitStatus, *status);
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
@@ -305,7 +314,6 @@ wait(int* status)
         p->killed = 0;
         p->state = UNUSED;
         release(&ptable.lock);
-        *status = p->exitStatus; // returning terminated child exit status through the status argument
         return pid;
       }
     }
@@ -320,6 +328,72 @@ wait(int* status)
     // Wait for children to exit.  (See wakeup1 call in proc_exit.)
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
+}
+
+// Wait for a process specified by PID to exit and return its PID
+// Return -1 if nonexistent, if not child of calling process, or unexpected error
+int
+waitpid(int pid, int* status, int options) {
+
+  struct proc *p;
+  int ischild, save_pid;
+  struct proc *curproc = myproc();
+
+  acquire(&ptable.lock);
+  for(;;){
+    // Scan through table looking for exited processes.
+    ischild = 0; 
+
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+
+      if (p->parent == curproc) {
+        ischild = 0;
+      }
+
+      // the process's PID does not match against
+      // the desired PID passed onto waitpid
+      if (p->pid != pid) {
+        continue; // not found PID
+      }
+
+      if(p->state == ZOMBIE){
+        // Found one.
+        save_pid = p->pid;
+        kfree(p->kstack);
+        p->kstack = 0;
+        freevm(p->pgdir);
+        p->pid = 0;
+        p->parent = 0;
+        p->name[0] = 0;
+        p->killed = 0;
+        p->state = UNUSED;
+        release(&ptable.lock);
+
+        *status = p->exitStatus; // returning terminated child exit status through the status argument
+
+        // child of the calling process
+        return save_pid;
+      }
+    }
+
+    // No point waiting if we don't have any children.
+    if(!ischild || curproc->killed){
+      release(&ptable.lock);
+      p->exitStatus = -1;
+      return -1;
+    }
+
+    // Wait for children to exit.  (See wakeup1 call in proc_exit.)
+    sleep(curproc, &ptable.lock);  //DOC: wait-sleep
+  }
+
+  return 0;
+}
+
+int
+lab1_test() {
+  return 0;
+  // TODO does nothing for now
 }
 
 //PAGEBREAK: 42

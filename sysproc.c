@@ -16,14 +16,43 @@ sys_fork(void)
 int
 sys_exit(void)
 {
+  if(argint(0, &myproc()->exitStatus) < 0)
+    return -1;
   exit(myproc()->exitStatus);
-  return 0;  // not reached
+  return -1;  // not reached
 }
 
+// returns output of wait 
+// calls wait function 
 int
 sys_wait(void)
 {
-  return wait(0);
+  int* status_ptr;
+  argptr(0, (char**) &status_ptr, 4);
+  return wait(status_ptr);
+}
+
+int
+sys_waitpid(void)
+{
+
+  int* status_ptr;
+  int pid;
+  int options;
+  
+  if(argint(0, &pid) < 0)
+    return -1;
+  argptr(1, (char**) &status_ptr, 4);
+  if(argint(2, &options) < 0)
+    return -1;
+  return waitpid(pid, status_ptr, options); // maybe change arguments later
+}
+
+int
+sys_lab1_test(void)
+{
+  lab1_test();
+  return 0;
 }
 
 int

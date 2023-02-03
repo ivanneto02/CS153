@@ -20,5 +20,7 @@
 #define SYS_link   19
 #define SYS_mkdir  20
 #define SYS_close  21
-#define SYS_getparents 22
-#define SYS_test 23
+#define SYS_getparents 22 // added
+#define SYS_test 23 // added
+#define SYS_waitpid 24 // added
+#define SYS_lab1_test 25 // added
