@@ -242,6 +242,8 @@ exit(int status)
     }
   }
 
+  curproc->exitStatus= status; 
+
   begin_op();
   iput(curproc->cwd);
   end_op();
@@ -270,7 +272,7 @@ exit(int status)
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
 int
-wait(void)
+wait(int *status)
 {
   struct proc *p;
   int havekids, pid;
@@ -284,6 +286,10 @@ wait(void)
       if(p->parent != curproc)
         continue;
       havekids = 1;
+      if (p->exitStatus == 0) {
+        *status = p->exitStatus; 
+        return p->pid; 
+      }
       if(p->state == ZOMBIE){
         // Found one.
         pid = p->pid;
